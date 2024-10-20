@@ -120,4 +120,11 @@ public class TestSpring {
         System.out.println("connectionFactoryBean = " + connectionFactoryBean);
     }
 
+    @Test
+    public void test12() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        Connection conn = (Connection) applicationContext.getBean("conn");
+        System.out.println("conn = " + conn);
+    }
+
 }

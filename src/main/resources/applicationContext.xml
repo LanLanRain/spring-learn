@@ -25,4 +25,9 @@
         <property name="password" value="mysql_1120"/>
     </bean>
 
+    <bean id="connectionFactory" class="com.lb.factorybean.ConnectionFactory"/>
+
+    <bean id="conn" factory-bean="connectionFactory" factory-method="getConnection"/>
+
+
 </beans>

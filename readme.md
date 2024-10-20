@@ -263,3 +263,80 @@ Spring通过底层调用对象属性的set方法，完成对成员变量赋值�
 #### 4.1.1 FactoryBean接口
 
 ![](img/QQ20241020-225349.png)
+
+```xml
+<bean id="connection" class="com.lb.factorybean.ConnectionFactoryBean"/>
+```
+
+如果class中指定的类型是FactoryBean接口的实现类，那么通过id值获取的是这个类所创建的复杂对象 Connection 。 
+
+
+
+```java
+public class ConnectionFactoryBean implements FactoryBean<Connection> {
+    private String driverClassName;
+    private String url;
+    private String username;
+    private String password;
+
+    public String getDriverClassName() {
+        return driverClassName;
+    }
+
+    public void setDriverClassName(String driverClassName) {
+        this.driverClassName = driverClassName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public Connection getObject() throws Exception {
+        Class.forName(driverClassName);
+        return DriverManager.getConnection(url, username, password);
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return Connection.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
+}
+
+
+<bean id="connection" class="com.lb.factorybean.ConnectionFactoryBean">
+    <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+    <property name="url" value="jdbc:mysql://localhost:3306/mybatis_learn"/>
+    <property name="username" value="root"/>
+    <property name="password" value="mysql_1120"/>
+</bean>
+
+```
+
+
+![](img/QQ20241020-232159.png)
