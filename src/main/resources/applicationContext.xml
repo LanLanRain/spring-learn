@@ -3,6 +3,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean id="person" class="com.lb.basic.Person"/>
 
+<!--No qualifying bean of type 'com.lb.basic.Person' available: expected single matching bean but found 2: person,person1-->
+    <bean id="person1" class="com.lb.basic.Person"/>
 
 </beans>
