@@ -17,4 +17,7 @@
         <constructor-arg name="name" value="lb"/>
         <constructor-arg name="age" value="18"/>
     </bean>
+
+    <bean id="connection" class="com.lb.factorybean.ConnectionFactoryBean"/>
+
 </beans>

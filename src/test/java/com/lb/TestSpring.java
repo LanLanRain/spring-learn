@@ -2,9 +2,12 @@ package com.lb;
 
 import com.lb.basic.*;
 import com.lb.basic.constructor.Customer;
+import com.lb.factorybean.ConnectionFactoryBean;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.sql.Connection;
 
 public class TestSpring {
 
@@ -101,6 +104,20 @@ public class TestSpring {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
         Customer customer = applicationContext.getBean("customer", Customer.class);
         System.out.println("customer = " + customer);
+    }
+
+    @Test
+    public void test10() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        Connection conn = applicationContext.getBean("connection", Connection.class);
+        System.out.println("conn = " + conn);
+    }
+
+    @Test
+    public void test11() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ConnectionFactoryBean connectionFactoryBean = applicationContext.getBean("&connection", ConnectionFactoryBean.class);
+        System.out.println("connectionFactoryBean = " + connectionFactoryBean);
     }
 
 }
