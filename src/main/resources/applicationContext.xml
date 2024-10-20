@@ -8,4 +8,13 @@
 <!--No qualifying bean of type 'com.lb.basic.Person' available: expected single matching bean but found 2: person,person1-->
     <bean id="person1" class="com.lb.basic.Person"/>
 
+    <bean id="person2" name="p" class="com.lb.basic.Person">
+        <property name="name" value="lb"/>
+        <property name="id" value="18"/>
+    </bean>
+
+    <bean id="customer" class="com.lb.basic.constructor.Customer">
+        <constructor-arg name="name" value="lb"/>
+        <constructor-arg name="age" value="18"/>
+    </bean>
 </beans>

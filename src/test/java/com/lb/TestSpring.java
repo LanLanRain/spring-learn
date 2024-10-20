@@ -1,6 +1,7 @@
 package com.lb;
 
 import com.lb.basic.*;
+import com.lb.basic.constructor.Customer;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -79,7 +80,27 @@ public class TestSpring {
         applicationContext.containsBeanDefinition("person1");
     }
 
+    @Test
+    public void test7() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        Person person = applicationContext.getBean("person", Person.class);
+        person.setId(1);
+        person.setName("张三");
+        System.out.println("person = " + person);
+    }
 
+    @Test
+    public void test8() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        Person person = applicationContext.getBean("person2", Person.class);
+        System.out.println("person = " + person);
+    }
 
+    @Test
+    public void test9() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        Customer customer = applicationContext.getBean("customer", Customer.class);
+        System.out.println("customer = " + customer);
+    }
 
 }
