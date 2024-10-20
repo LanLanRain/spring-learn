@@ -18,6 +18,11 @@
         <constructor-arg name="age" value="18"/>
     </bean>
 
-    <bean id="connection" class="com.lb.factorybean.ConnectionFactoryBean"/>
+    <bean id="connection" class="com.lb.factorybean.ConnectionFactoryBean">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/mybatis_learn"/>
+        <property name="username" value="root"/>
+        <property name="password" value="mysql_1120"/>
+    </bean>
 
 </beans>
