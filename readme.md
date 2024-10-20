@@ -335,8 +335,27 @@ public class ConnectionFactoryBean implements FactoryBean<Connection> {
     <property name="username" value="root"/>
     <property name="password" value="mysql_1120"/>
 </bean>
-
 ```
 
 
+
+#### 4.1.2 FactoryBean实现的简易原理
+
+接口回调
+
+1. 为什么Spring规定FactoryBean接口，并且实现getObject()?
+2. ctx.getBean("conn")获取的是复杂对象Connection，而非ConnectionFactoryBean。
+
+
+
+Spring内部运行流程
+
 ![](img/QQ20241020-232159.png)
+
+### 4.2 实例工厂
+
+### 4.3 静态工厂
+
+### 4.4 总结
+
+![](img/QQ20241020-233822.png)
