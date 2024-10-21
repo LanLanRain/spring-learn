@@ -491,3 +491,24 @@ public class MyBeanPostPro implements BeanPostProcessor {
 <bean id="myBeanPostPro" class="com.lb.beanpost.MyBeanPostPro"/>
 ```
 
+## 6. 代理设计模式
+
+### 6.1 静态代理
+
+![](img/QQ20241021-115413.png)
+
+问题：静态代理类文件数量多
+
+
+
+### 6.2 动态代理
+
+![](img/QQ20241021-145217.png)
+
+细节：
+
+- `Spring`创建的动态代理类在哪里？
+  `Spring`框架在运行时，通过动态字节码技术，在JVM创建的，等程序结束后，会和JVM一起消失。
+  什么是动态字节码技术：通过第三方动态字节码框架，在JVM中创建对应类的字节码，进而创建对象，当虚拟机结束，动态字节码跟着消失。
+![](img/QQ20241021-150527.png)
+- 

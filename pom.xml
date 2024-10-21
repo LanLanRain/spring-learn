@@ -46,6 +46,25 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.30</version>
         </dependency>
+        <!-- Spring AOP 依赖 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>6.1.13</version>
+        </dependency>
+        <!-- AspectJ 织入器，用于在运行时织入切面 -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.7</version>
+        </dependency>
+        <!-- AspectJ 运行时，提供了对 AspectJ 注解的支持 -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.9.22.1</version>
+        </dependency>
+
     </dependencies>
 
 </project>
