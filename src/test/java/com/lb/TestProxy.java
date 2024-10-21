@@ -17,4 +17,11 @@ public class TestProxy {
         userService.register(new User("张三", "123456"));
         userService.login("张三", "123456");
     }
+
+    @Test
+    public void test2() {
+        ApplicationContext applicationContext = new
+                ClassPathXmlApplicationContext("applicationContext2.xml");
+
+    }
 }

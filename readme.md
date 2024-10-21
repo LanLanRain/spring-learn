@@ -510,5 +510,138 @@ public class MyBeanPostPro implements BeanPostProcessor {
 - `Spring`创建的动态代理类在哪里？
   `Spring`框架在运行时，通过动态字节码技术，在JVM创建的，等程序结束后，会和JVM一起消失。
   什么是动态字节码技术：通过第三方动态字节码框架，在JVM中创建对应类的字节码，进而创建对象，当虚拟机结束，动态字节码跟着消失。
-![](img/QQ20241021-150527.png)
-- 
+  <img src="img/QQ20241021-150527.png" style="zoom:50%;" />
+  
+  动态代理无需类文件，避免了静态代理的弊端。
+  
+- 动态代理的编程简化代理的开发
+
+  在额外功能不改变的前提下，创建其他目标类的代理对象，只需要指定原始目标对象即可，
+
+- 动态代理额外功能维护性大大增强
+
+
+
+### 6.3 额外功能详解
+
+1. `MethodBeforeAdvice`
+
+   只能执行在原始方法之前。
+
+```java
+public class Before implements MethodBeforeAdvice {
+    /**
+     * 在目标方法执行前执行的增强逻辑
+     *
+     * @param method 目标方法       boolean login(String name, String password)
+     * @param args   目标方法的参数  String username, String password
+     * @param target 目标对象       UserServiceImpl
+     * @throws Throwable 如果在执行通知时发生异常
+     */
+    @Override
+    public void before(Method method, Object[] args, Object target) throws Throwable {
+        System.out.println("---Before.before Log---");
+    }
+}
+
+各个参数按需使用
+```
+
+2. `MethodInterceptor`方法拦截器
+
+   ```java
+   public class Around implements MethodInterceptor {
+       /**
+        * 在目标方法执行前后执行的增强逻辑
+        *
+        * @param methodInvocation 方法调用对象，包含目标方法的信息
+        * @return 目标方法的执行结果
+        * @throws Throwable 如果在执行通知时发生异常
+        */
+       @Override
+       public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+           System.out.println("---Around.before Log---");
+           Object result = methodInvocation.proceed();
+           System.out.println("---Around.after Log---");
+           return result;
+       }
+   }
+   ```
+
+   ```java
+   public class Around implements MethodInterceptor {
+       @Override
+       public Object invoke(MethodInvocation methodInvocation) throws Throwable {
+           Object result = null;
+           try {
+               result = methodInvocation.proceed();
+           } catch (Throwable throwable) {
+               throwable.printStackTrace();
+           }
+           return result;
+       }
+   }
+   原始方法抛出异常时执行
+   ```
+
+   
+
+### 
+
+在 Java 的 AOP（Aspect-Oriented Programming，面向切面编程）开发中，**切点表达式**用于定义在哪些连接点（Join Points）上应用通知（Advice）。连接点通常是方法的执行。切点表达式的作用是找到匹配的连接点，然后在这些连接点上执行对应的切面逻辑（如前置通知、后置通知等）。
+
+### 6.4 切入点详解
+
+1. **访问修饰符（可选）**：用于指定方法的访问修饰符，例如 `public`、`private` 等。如果不指定，则匹配所有修饰符。
+   
+2. **返回类型**：指定匹配方法的返回类型，通常使用 `*` 表示任意返回类型。
+
+3. **包名**：指定方法所在的包名，可以是精确包名，也可以使用 `..` 来表示递归匹配子包。
+
+4. **类名**：指定方法所属的类名。可以用 `*` 表示所有类。
+
+5. **方法名**：指定要匹配的方法名。可以使用 `*` 表示任意方法。
+
+6. **参数列表**：指定匹配方法的参数类型，可以使用具体类型或者通配符 `..` 表示任意参数。
+[UserService.java](src/main/java/com/lb/proxy/dynamic/UserService.java)
+#### 常见的切点表达式
+1. **execution**：最常见的切点表达式，用于匹配方法执行。
+   
+   语法格式：`execution(修饰符 返回类型 包名.类名.方法名(参数))`
+
+   示例：
+   - `execution(public * com.example.service.UserService.*(..))`：匹配 `UserService` 类中所有公共方法，方法参数可以是任意类型。
+   - `execution(* com.example..*.*(..))`：匹配 `com.example` 包及其子包中所有类的任意方法。
+
+2. **within**：匹配某个类或包中的所有方法。
+
+   语法格式：`within(包名.类名)`
+
+   示例：
+   - `within(com.example.service.UserService)`：匹配 `UserService` 类中的所有方法。
+   - `within(com.example.service..*)`：匹配 `com.example.service` 包及其子包中的所有类的所有方法。
+
+3. **this** 和 **target**：分别用于匹配代理对象和目标对象的类型。`this` 匹配的是代理对象，`target` 匹配的是目标对象。
+
+   示例：
+   - `this(com.example.service.UserService)`：匹配 `UserService` 类型的代理对象。
+   - `target(com.example.service.UserService)`：匹配 `UserService` 类型的目标对象。
+
+4. **args**：匹配方法参数的类型。
+
+   语法格式：`args(参数类型)`
+
+   示例：
+   - `args(java.lang.String)`：匹配第一个参数为 `String` 类型的方法。
+   - `args(java.lang.String, ..)`：匹配第一个参数为 `String`，后面可以有任意数量和类型参数的方法。
+
+5. **@annotation**：匹配带有指定注解的方法。
+
+   示例：
+   - `@annotation(com.example.MyAnnotation)`：匹配标有 `MyAnnotation` 注解的方法。
+
+6. **@within** 和 **@target**：用于匹配类上的注解。`@within` 用于匹配目标类具有某个注解，`@target` 用于匹配代理对象的目标类具有某个注解。
+
+   示例：
+   - `@within(com.example.MyClassAnnotation)`：匹配带有 `MyClassAnnotation` 注解的类中的所有方法。
+
