@@ -29,5 +29,9 @@
 
     <bean id="conn" factory-bean="connectionFactory" factory-method="getConnection"/>
 
+    <bean id="account" scope="prototype"  class="com.lb.scope.Account"/>
 
+    <bean id="product"  init-method="myInit" scope="prototype" destroy-method="myDestroy" class="com.lb.life.Product">
+        <property name="name" value="product"/>
+    </bean>
 </beans>

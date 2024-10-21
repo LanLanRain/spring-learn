@@ -2,7 +2,10 @@ package com.lb;
 
 import com.lb.basic.*;
 import com.lb.basic.constructor.Customer;
+import com.lb.beanpost.Category;
 import com.lb.factorybean.ConnectionFactoryBean;
+import com.lb.life.Product;
+import com.lb.scope.Account;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -126,5 +129,33 @@ public class TestSpring {
         Connection conn = (Connection) applicationContext.getBean("conn");
         System.out.println("conn = " + conn);
     }
+
+    @Test
+    public void test13() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        Account account1 = applicationContext.getBean("account", Account.class);
+        Account account2 = applicationContext.getBean("account", Account.class);
+
+        System.out.println("account1 = " + account1);
+        System.out.println("account2 = " + account2);
+
+    }
+
+    @Test
+    public void test14() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
+        applicationContext.close();
+    }
+
+
+    @Test
+    public void test15() {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("applicationContext2.xml");
+        Category category = (Category) applicationContext.getBean("category");
+
+        System.out.println("category = " + category.getName());
+    }
+
+
 
 }

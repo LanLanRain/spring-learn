@@ -359,3 +359,135 @@ Spring内部运行流程
 ### 4.4 总结
 
 ![](img/QQ20241020-233822.png)
+
+
+
+## 5. 对象生命周期
+
+### 5.1 创建
+
+`Spring`工厂什么时候创建对象？
+
+- `scope = singleton`：`Spring`工厂创建的同时，创建对象。在这种情况下，如果需要在获取对象时再创建对象可以设置：`<bean lazy-init="true"`
+- `scope = prototype`:在获取对象的同时创建对象。
+
+
+
+### 5.2 初始化
+
+ `Spring`在创建对象之后，调用对象的初始化方法，完成对象的初始化操作。
+
+- `InitializingBean`接口
+
+```java
+@Override
+public void afterPropertiesSet() throws Exception {
+    根据自己的需求进行初始化
+}
+```
+
+- 提供一个普通方法并在配置文件中配置。
+
+```java
+public void myInit() {
+    
+}
+
+<bean id="product" class="xxx.Product" init-method=""/>
+```
+
+细节：
+
+1. 如果二者同时存在：`InitializingBean` 先于 `myInit` 执行。
+
+2. 注入先于初始化
+
+### 5.3 销毁阶段
+
+`Spring`什么时候销毁创建的对象？`applicationContext.close()`执行时。
+
+- `DisposableBean`
+
+  ```java
+  @Override
+  public void destroy() throws Exception {
+      System.out.println("Product.destroy");
+  }
+  ```
+
+- 提供一个普通方法并在配置文件中配置。
+
+  ```java
+  public void myDestroy() {
+      System.out.println("Product.myDestroy");
+  }
+  <bean id="product" class="xxx.Product" destroy-method=""/>
+  ```
+
+  细节：
+
+  1. 销毁操作仅仅适用于`scope="singleton"`
+
+
+
+### 5.4 生命周期总结
+
+![](img/QQ20241021-091400.png)
+
+### 5.5 后置处理Bean
+
+![](img/QQ20241021-105238.png)
+
+程序员实现`BeanPostProcessor`规定接口中的方法：
+
+```java
+@Nullable
+default Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    return bean;
+}
+作用：Spring创建完对象并进行注入后可以运行before方法进行加工，
+获得Spring创建好的对象：通过方法参数
+最终通过返回值交给Spring框架
+    
+
+@Nullable
+default Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+	return bean;
+}
+作用：Spring执行初始化操作之后可以运行After方法加工
+获得Spring创建好的对象：通过方法参数
+最终通过返回值交给Spring框架
+```
+
+```java
+public class Category {
+    private Integer id;
+    private String name;
+	// set get
+}
+
+public class MyBeanPostPro implements BeanPostProcessor {
+
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        return BeanPostProcessor.super.postProcessBeforeInitialization(bean, beanName);
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        if (bean instanceof Category) {
+            Category category = (Category) bean;
+            category.setName("myBeanPostPro");
+        }
+        return bean;
+    }
+}
+
+<bean id="category" class="com.lb.beanpost.Category">
+    <property name="name" value="category"/>
+    <property name="id" value="1"/>
+</bean>
+
+<bean id="myBeanPostPro" class="com.lb.beanpost.MyBeanPostPro"/>
+```
+
