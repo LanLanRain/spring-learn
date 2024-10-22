@@ -653,6 +653,193 @@ public class Before implements MethodBeforeAdvice {
 
 ![](img/QQ20241022-161941.png)
 
+```java
+public class TestJdkProxy {
+    public static void main(String[] args) {
+        // 创建一个 UserService 接口的实现类 UserServiceImpl 的实例
+        UserService userService = new UserServiceImpl();
+
+        // 创建一个 InvocationHandler 接口的实现类，用于处理代理对象的方法调用
+        InvocationHandler handler = new InvocationHandler() {
+            /**
+             * 当代理对象的方法被调用时，会自动调用这个 invoke 方法。
+             *
+             * @param proxy 代理对象。
+             * @param method 被调用的方法。
+             * @param args 方法的参数。
+             * @return 方法的返回值。
+             * @throws Throwable 任何可能抛出的异常。
+             */
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                // 在执行目标方法之前，输出一些信息
+                System.out.println("执行目标方法之前");
+                // 执行目标方法
+                Object ret = method.invoke(userService, args);
+                // 返回目标方法的执行结果
+                return ret;
+            }
+        };
+
+        // 使用 Proxy 类的 newProxyInstance 方法创建一个代理对象
+        UserService newedProxyInstance = (UserService) Proxy.newProxyInstance(TestJdkProxy.class.getClassLoader(), userService.getClass().getInterfaces(), handler);
+
+        // 调用代理对象的方法
+        newedProxyInstance.register(new User("张三", "123456"));
+        newedProxyInstance.login("张三", "123456");
+    }
+}
+```
+
 ### 7.2 CGlib的动态代理
 
 ![](img/QQ20241022-163232.png)
+
+```java
+public class TestCglib {
+    public static void main(String[] args) {
+        // 创建一个 UserService 接口的实现类 UserServiceImpl 的实例
+        UserService userService = new UserService();
+
+        // 创建一个 Enhancer 对象，用于生成代理类
+        Enhancer enhancer = new Enhancer();
+
+        // 设置 Enhancer 对象的类加载器
+        enhancer.setClassLoader(TestCglib.class.getClassLoader());
+
+        // 设置 Enhancer 对象的父类，即要代理的目标类
+        enhancer.setSuperclass(UserService.class);
+
+        // 创建一个 MethodInterceptor 接口的实现类，用于处理代理对象的方法调用
+        MethodInterceptor interceptor = new MethodInterceptor() {
+            /**
+             * 当代理对象的方法被调用时，会自动调用这个 intercept 方法。
+             *
+             * @param obj 代理对象。
+             * @param method 被调用的方法。
+             * @param args 方法的参数。
+             * @param proxy 方法的代理对象。
+             * @return 方法的返回值。
+             * @throws Throwable 任何可能抛出的异常。
+             */
+            @Override
+            public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+                // 在执行目标方法之前，输出一些信息
+                System.out.println("执行目标方法之前");
+                // 执行目标方法
+                Object ret = method.invoke(userService, args);
+                // 在执行目标方法之后，输出一些信息
+                System.out.println("执行目标方法之后");
+                // 返回目标方法的执行结果
+                return ret;
+            }
+        };
+
+        // 设置 Enhancer 对象的回调函数，即 MethodInterceptor 接口的实现类
+        enhancer.setCallback(interceptor);
+
+        // 使用 Enhancer 对象创建一个代理对象
+        UserService newedProxyInstance = (UserService) enhancer.create();
+        newedProxyInstance.register(new User("张三", "123456"));
+        newedProxyInstance.login("张三", "123456");
+    }
+}
+```
+
+
+
+### 7.3 Spring工厂如何加工原始对象？
+
+![](img/QQ20241022-170455.png)
+
+```java
+public class ProxyBeanPostProcessor implements BeanPostProcessor {
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
+
+    /**
+     * 在 bean 初始化之后执行的处理方法。
+     * 该方法使用 JDK 动态代理为传入的 bean 创建一个代理对象，并在代理对象的方法调用前后输出一些信息。
+     *
+     * @param bean     被处理的 bean 对象。
+     * @param beanName bean 的名称。
+     * @return 返回创建的代理对象。
+     * @throws BeansException 如果在处理过程中发生异常。
+     */
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        // 创建一个 InvocationHandler 接口的实现类，用于处理代理对象的方法调用
+        InvocationHandler invocationHandler = new InvocationHandler() {
+            /**
+             * 当代理对象的方法被调用时，会自动调用这个 invoke 方法。
+             * 在这个方法中，我们在执行目标方法之前输出 "before"，执行目标方法之后输出 "after"。
+             *
+             * @param proxy 代理对象。
+             * @param method 被调用的方法。
+             * @param args 方法的参数。
+             * @return 方法的返回值。
+             * @throws Throwable 任何可能抛出的异常。
+             */
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                System.out.println("before");
+                // 执行目标方法
+                Object invoke = method.invoke(bean, args);
+                System.out.println("after");
+                // 返回目标方法的执行结果
+                return invoke;
+            }
+        };
+        // 使用 Proxy 类的 newProxyInstance 方法创建一个代理对象
+        return Proxy.newProxyInstance(ProxyBeanPostProcessor.class.getClassLoader(), bean.getClass().getInterfaces(), invocationHandler);
+    }
+}
+
+<bean id="userService" class="com.lb.factory.UserServiceImpl"/>
+
+<bean id="proxyBeanPostProcessor" class="com.lb.factory.ProxyBeanPostProcessor"/>
+```
+
+### 7.4 注解式AOP
+
+1. 原始对象
+2. 额外功能
+3. 切入点
+4. 组装切面
+
+```java
+切面类: 定义额外功能   @Around
+       定义切入点	 @Around("execution(* login(..))")
+	    @Aspect 切面类
+    
+@Aspect
+public class MyAspect {
+    /**
+     * 定义一个环绕通知，在目标方法执行前后执行
+     * @param proceedingJoinPoint 连接点，用于执行目标方法
+     * @return 目标方法的执行结果
+     * @throws Throwable 目标方法抛出的异常
+     */
+    @Around("execution(* login(..))")
+    public Object around(ProceedingJoinPoint proceedingJoinPoint) {
+        try {
+            System.out.println("before");
+            // 执行目标方法
+            Object proceed = proceedingJoinPoint.proceed();
+            System.out.println("after");
+            return proceed;
+        } catch (Throwable e) {
+            // 捕获目标方法抛出的异常，并重新抛出
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+<bean id="userService" class="com.lb.aspect.UserServiceImpl"/>
+<bean id="myAspect" class="com.lb.aspect.MyAspect"/>
+
+<aop:aspectj-autoproxy/>
+```
+

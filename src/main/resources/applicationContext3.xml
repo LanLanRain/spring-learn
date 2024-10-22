@@ -3,7 +3,12 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <bean id="userService" class="com.lb.factory.UserServiceImpl"/>
+<!--    <bean id="userService" class="com.lb.factory.UserServiceImpl"/>-->
 
-    <bean id="proxyBeanPostProcessor" class="com.lb.factory.ProxyBeanPostProcessor"/>
+<!--    <bean id="proxyBeanPostProcessor" class="com.lb.factory.ProxyBeanPostProcessor"/>-->
+
+    <bean id="userService" class="com.lb.aspect.UserServiceImpl"/>
+    <bean id="myAspect" class="com.lb.aspect.MyAspect"/>
+
+    <aop:aspectj-autoproxy/>
 </beans>
