@@ -645,3 +645,14 @@ public class Before implements MethodBeforeAdvice {
    示例：
    - `@within(com.example.MyClassAnnotation)`：匹配带有 `MyClassAnnotation` 注解的类中的所有方法。
 
+
+
+## 7. AOP编程
+
+### 7.1 动态代理类的创建
+
+![](img/QQ20241022-161941.png)
+
+### 7.2 CGlib的动态代理
+
+![](img/QQ20241022-163232.png)

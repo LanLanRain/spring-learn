@@ -24,4 +24,15 @@ public class TestProxy {
                 ClassPathXmlApplicationContext("applicationContext2.xml");
 
     }
+
+    @Test
+    public void test3() {
+        ApplicationContext applicationContext = new
+                ClassPathXmlApplicationContext("applicationContext3.xml");
+        com.lb.factory.UserService userService = (com.lb.factory.UserService) applicationContext.getBean("userService");
+
+        userService.register(new com.lb.basic.User("张三", "123456"));
+        userService.login("张三", "123456");
+
+    }
 }
